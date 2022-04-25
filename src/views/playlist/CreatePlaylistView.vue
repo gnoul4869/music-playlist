@@ -1,5 +1,8 @@
 <script setup>
 import { ref } from '@vue/reactivity';
+import useStorage from '@/composables/useStorage';
+
+const { storageError, uploadImage, url } = useStorage();
 
 const title = ref('');
 const description = ref('');
@@ -24,8 +27,17 @@ const handleImage = (e) => {
     }
 };
 
-const handleSubmit = () => {
-    if (image.value) console.log(title.value, description.value, image.value);
+const handleSubmit = async () => {
+    if (image.value) {
+        console.log(title.value, description.value, image.value);
+        await uploadImage(image.value);
+
+        if (!storageError.value) {
+            console.log('Image uploaded successfully');
+        } else {
+            error.value = storageError.value;
+        }
+    }
 };
 </script>
 
