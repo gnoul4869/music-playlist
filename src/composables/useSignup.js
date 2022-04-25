@@ -3,9 +3,11 @@ import { createUserWithEmailAndPassword, updateProfile } from '@firebase/auth';
 import { ref } from 'vue';
 
 const error = ref(null);
+const isPending = ref(false);
 
 const signup = async (email, password, displayName) => {
     error.value = null;
+    isPending.value = true;
 
     try {
         const res = await createUserWithEmailAndPassword(fireAuth, email, password);
@@ -16,14 +18,16 @@ const signup = async (email, password, displayName) => {
 
         await updateProfile(res.user, { displayName });
 
+        isPending.value = false;
         return res;
     } catch (err) {
         error.value = err.message.replace('Firebase: ', '');
+        isPending.value = false;
     }
 };
 
 const useSignup = () => {
-    return { signup, error };
+    return { error, isPending, signup };
 };
 
 export default useSignup;
