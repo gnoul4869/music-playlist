@@ -1,23 +1,10 @@
-<template>
-    <div class="navbar">
-        <nav>
-            <h1>
-                <router-link :to="{ name: 'home' }"> Music Playlist </router-link>
-            </h1>
-            <div class="links">
-                <button @click="handleLogout">Log out</button>
-                <router-link class="btn" :to="{ name: 'signup' }">Sign up</router-link>
-                <router-link class="btn" :to="{ name: 'login' }">Log in</router-link>
-            </div>
-        </nav>
-    </div>
-</template>
-
 <script setup>
+import getUser from '@/composables/getUser';
 import useLogout from '@/composables/useLogout';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+const { user } = getUser();
 const { error, logout } = useLogout();
 
 const handleLogout = async () => {
@@ -28,6 +15,25 @@ const handleLogout = async () => {
     }
 };
 </script>
+
+<template>
+    <div class="navbar">
+        <nav>
+            <h1>
+                <router-link :to="{ name: 'home' }"> Music Playlist </router-link>
+            </h1>
+            <div class="links">
+                <div v-if="user">
+                    <button @click="handleLogout">Log out</button>
+                </div>
+                <div v-else>
+                    <router-link class="btn" :to="{ name: 'signup' }">Sign up</router-link>
+                    <router-link class="btn" :to="{ name: 'login' }">Log in</router-link>
+                </div>
+            </div>
+        </nav>
+    </div>
+</template>
 
 <style scoped>
 .navbar {

@@ -2,7 +2,7 @@ import { onAuthStateChanged } from '@firebase/auth';
 import { fireAuth } from '@/firebase/config';
 import { ref } from 'vue';
 
-const user = ref({});
+const user = ref(fireAuth.currentUser);
 
 onAuthStateChanged(fireAuth, (_user) => {
     user.value = _user;
