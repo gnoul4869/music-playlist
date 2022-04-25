@@ -3,9 +3,29 @@ import { ref } from '@vue/reactivity';
 
 const title = ref('');
 const description = ref('');
+const image = ref(null);
+const error = ref('');
+
+const allowedImageTypes = ['image/jpeg', 'image/png'];
+
+const handleImage = (e) => {
+    const selectedImage = e.target.files[0];
+
+    if (selectedImage) {
+        if (!allowedImageTypes.includes(selectedImage.type)) {
+            return (error.value = 'Only jpg and png images are allowed');
+        }
+
+        image.value = selectedImage;
+        error.value = '';
+    } else {
+        image.value = null;
+        error.value = 'Please choose an image';
+    }
+};
 
 const handleSubmit = () => {
-    console.log(title.value, description.value);
+    if (image.value) console.log(title.value, description.value, image.value);
 };
 </script>
 
@@ -16,9 +36,9 @@ const handleSubmit = () => {
         <textarea required placeholder="Description" v-model="description"></textarea>
         <!-- Upload playlist image -->
         <label>Upload playlist cover image</label>
-        <input type="file" />
+        <input type="file" @change="handleImage" />
 
-        <div class="error"></div>
+        <div class="error">{{ error }}</div>
         <button>Create</button>
     </form>
 </template>
