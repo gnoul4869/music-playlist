@@ -3,16 +3,11 @@ import getUser from '@/composables/getUser';
 import useLogout from '@/composables/useLogout';
 import { useRouter } from 'vue-router';
 
-const router = useRouter();
 const { user } = getUser();
-const { error, logout } = useLogout();
+const { logout } = useLogout();
 
 const handleLogout = async () => {
     await logout();
-
-    if (!error.value) {
-        router.push({ name: 'login' });
-    }
 };
 </script>
 
@@ -24,11 +19,12 @@ const handleLogout = async () => {
             </h1>
             <div class="links">
                 <div v-if="user">
+                    <router-link :to="{ name: 'createPlaylist' }">Create Playlist</router-link>
                     <button @click="handleLogout">Log out</button>
                 </div>
                 <div v-else>
-                    <router-link class="btn" :to="{ name: 'signup' }">Sign up</router-link>
-                    <router-link class="btn" :to="{ name: 'login' }">Log in</router-link>
+                    <router-link :to="{ name: 'signup' }" class="btn">Sign up</router-link>
+                    <router-link :to="{ name: 'login' }" class="btn">Log in</router-link>
                 </div>
             </div>
         </nav>
