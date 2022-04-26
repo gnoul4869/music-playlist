@@ -1,13 +1,20 @@
 <script setup>
-import { ref } from '@vue/reactivity';
+import { computed, ref } from '@vue/reactivity';
+import { serverTimestamp } from '@firebase/firestore';
+import getUser from '@/composables/getUser';
 import useStorage from '@/composables/useStorage';
+import useCollection from '@/composables/useCollection';
 
-const { storageError, uploadImage, url } = useStorage();
+const storage = useStorage();
+const collection = useCollection('playlists');
+const { user } = getUser();
 
 const title = ref('');
 const description = ref('');
 const image = ref(null);
+
 const error = ref('');
+const isPending = ref(false);
 
 const allowedImageTypes = ['image/jpeg', 'image/png'];
 
@@ -28,16 +35,34 @@ const handleImage = (e) => {
 };
 
 const handleSubmit = async () => {
-    if (image.value) {
-        console.log(title.value, description.value, image.value);
-        await uploadImage(image.value);
+    if (!user.value) return (error.value = 'You must be logged in to create a playlist');
+    if (!image.value) return (error.value = 'Please choose an image');
 
-        if (!storageError.value) {
-            console.log('Image uploaded successfully');
-        } else {
-            error.value = storageError.value;
-        }
+    error.value = '';
+    isPending.value = true;
+
+    await storage.uploadImage(image.value, user.value.uid);
+    await collection.addDocument({
+        title: title.value,
+        description: description.value,
+        userId: user.value.uid,
+        userName: user.value.displayName,
+        coverURL: storage.url.value,
+        coverPath: storage.filePath.value,
+        songs: [],
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+    });
+
+    isPending.value = false;
+
+    if (storage.error.value) {
+        return (error.value = storage.error.value);
     }
+    if (collection.error.value) {
+        return (error.value = collection.error.value);
+    }
+    console.log('Playlist created successfully');
 };
 </script>
 
@@ -51,7 +76,8 @@ const handleSubmit = async () => {
         <input type="file" @change="handleImage" />
 
         <div class="error">{{ error }}</div>
-        <button>Create</button>
+        <button v-if="!isPending">Create</button>
+        <button v-else disabled>Creating...</button>
     </form>
 </template>
 

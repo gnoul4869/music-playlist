@@ -4,23 +4,18 @@ import { ref } from 'vue';
 
 const useCollection = (collectionName) => {
     const error = ref(null);
-    const isPending = ref(false);
 
     const addDocument = async (doc) => {
         error.value = null;
-        isPending.value = true;
 
         try {
             await addDoc(collection(firestore, collectionName), doc);
-            isPending.value = false;
         } catch (err) {
-            console.err(err.message);
-            error.value = 'Could not send the message';
-            isPending.value = false;
+            error.value = err.message;
         }
     };
 
-    return { error, isPending, addDocument };
+    return { error, addDocument };
 };
 
 export default useCollection;
