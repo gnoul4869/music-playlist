@@ -2,11 +2,11 @@ import { signOut } from '@firebase/auth';
 import { fireAuth } from '@/firebase/config';
 import { ref } from 'vue';
 
-const error = ref(null);
+const error = ref('');
 const isPending = ref(false);
 
 const logout = async () => {
-    error.value = null;
+    error.value = '';
     isPending.value = true;
 
     try {

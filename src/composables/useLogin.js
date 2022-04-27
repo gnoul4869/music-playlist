@@ -2,11 +2,11 @@ import { fireAuth } from '@/firebase/config';
 import { signInWithEmailAndPassword } from '@firebase/auth';
 import { ref } from 'vue';
 
-const error = ref(null);
+const error = ref('');
 const isPending = ref(false);
 
 const login = async (email, password) => {
-    error.value = null;
+    error.value = '';
     isPending.value = true;
 
     try {

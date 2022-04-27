@@ -4,7 +4,7 @@ import { onUnmounted, ref, watchEffect } from 'vue';
 
 const getCollection = (collectionName) => {
     const documents = ref(null);
-    const error = ref(null);
+    const error = ref('');
 
     const conllectionRef = collection(firestore, collectionName);
     const collectionQuery = query(conllectionRef, orderBy('createdAt', 'asc'));
@@ -16,7 +16,7 @@ const getCollection = (collectionName) => {
                 doc.data().createdAt && results.push({ ...doc.data(), id: doc.id });
             });
             documents.value = results;
-            error.value = null;
+            error.value = '';
         },
         (err) => {
             console.log(err.message);

@@ -3,10 +3,10 @@ import { addDoc, collection } from '@firebase/firestore';
 import { ref } from 'vue';
 
 const useCollection = (collectionName) => {
-    const error = ref(null);
+    const error = ref('');
 
     const addDocument = async (doc) => {
-        error.value = null;
+        error.value = '';
 
         try {
             const res = await addDoc(collection(firestore, collectionName), doc);
