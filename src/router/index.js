@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
+
+import { fireAuth } from '@/firebase/config.js';
+
 import LoginView from '@/views/auth/LoginView.vue';
 import SignupView from '@/views/auth/SignupView.vue';
 import HomeView from '@/views/HomeView.vue';
 import CreatePlaylistView from '@/views/playlist/CreatePlaylistView.vue';
-
-import { fireAuth } from '@/firebase/config.js';
+import PlaylistDetailsView from '@/views/playlist/PlaylistDetailsView.vue';
 
 const requireAuth = (to, from, next) => {
     const user = fireAuth.currentUser;
@@ -50,6 +52,12 @@ const router = createRouter({
             name: 'createPlaylist',
             component: CreatePlaylistView,
             beforeEnter: requireAuth,
+        },
+        {
+            path: '/playlist/:id',
+            name: 'playlistDetails',
+            component: PlaylistDetailsView,
+            props: true,
         },
     ],
 });
