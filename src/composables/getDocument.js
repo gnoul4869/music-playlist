@@ -1,4 +1,6 @@
+import { onUnmounted, ref } from 'vue';
 import { doc, onSnapshot } from '@firebase/firestore';
+import { firestore } from '@/firebase/config';
 
 const getDocument = (collectionName, documentId) => {
     const document = ref(null);
