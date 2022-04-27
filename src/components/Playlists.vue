@@ -1,8 +1,9 @@
 <script setup>
 import { watch } from 'vue';
 import { useRouter } from 'vue-router';
-import getUser from '@/composables/getUser';
 import { computed } from '@vue/reactivity';
+import getUser from '@/composables/getUser';
+import generateParams from '@/utils/generateParams';
 
 const props = defineProps({
     playlists: Array,
@@ -17,16 +18,12 @@ watch(user, () => {
         router.push({ name: 'login' });
     }
 });
-
-const createParams = (title, id) => {
-    return title.replace(/\s/g, '-') + '.' + id;
-};
 </script>
 
 <template>
     <div v-for="playlist in playlists" :key="playlist.id">
         <router-link
-            :to="{ name: 'playlistDetails', params: { id: createParams(playlist.title, playlist.id) } }"
+            :to="{ name: 'playlistDetails', params: { id: generateParams(playlist.title, playlist.id) } }"
         >
             <div class="single">
                 <div class="thumbnail">

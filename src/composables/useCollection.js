@@ -9,7 +9,9 @@ const useCollection = (collectionName) => {
         error.value = null;
 
         try {
-            await addDoc(collection(firestore, collectionName), doc);
+            const res = await addDoc(collection(firestore, collectionName), doc);
+
+            return res;
         } catch (err) {
             error.value = err.message;
         }

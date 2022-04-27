@@ -4,6 +4,10 @@ import { serverTimestamp } from '@firebase/firestore';
 import getUser from '@/composables/getUser';
 import useStorage from '@/composables/useStorage';
 import useCollection from '@/composables/useCollection';
+import { useRouter } from 'vue-router';
+import generateParams from '@/utils/generateParams';
+
+const router = useRouter();
 
 const storage = useStorage();
 const collection = useCollection('playlists');
@@ -42,7 +46,7 @@ const handleSubmit = async () => {
     isPending.value = true;
 
     await storage.uploadImage(image.value, user.value.uid);
-    await collection.addDocument({
+    const res = await collection.addDocument({
         title: title.value,
         description: description.value,
         userId: user.value.uid,
@@ -62,7 +66,8 @@ const handleSubmit = async () => {
     if (collection.error.value) {
         return (error.value = collection.error.value);
     }
-    console.log('Playlist created successfully');
+
+    router.push({ name: 'playlistDetails', params: { id: generateParams(title.value, res.id) } });
 };
 </script>
 
