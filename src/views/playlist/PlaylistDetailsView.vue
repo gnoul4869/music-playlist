@@ -1,6 +1,11 @@
 <script setup>
-import { computed } from '@vue/reactivity';
+import { computed, ref } from '@vue/reactivity';
+import { useRouter } from 'vue-router';
 import getDocument from '@/composables/getDocument';
+import useDocument from '@/composables/useDocument';
+import getUser from '@/composables/getUser';
+
+const router = useRouter();
 
 const props = defineProps({
     id: String,
@@ -10,7 +15,27 @@ const playlistId = computed(() => {
     return props.id.split('.').pop();
 });
 
-const { document: playlist, error } = getDocument('playlists', playlistId.value);
+const error = computed(() => {
+    return getDocumentError.value || useDocumentError.value;
+});
+
+const isPending = ref(false);
+
+const { document: playlist, error: getDocumentError } = getDocument('playlists', playlistId.value);
+const { error: useDocumentError, deleteDocument } = useDocument('playlists', playlistId.value);
+const { user } = getUser();
+
+const isPlaylistOwner = computed(() => {
+    return playlist.value && user.value && user.value.uid === playlist.value.userId;
+});
+
+const handleDelete = async () => {
+    isPending.value = true;
+    await deleteDocument();
+    isPending.value = false;
+
+    router.push({ name: 'home' });
+};
 </script>
 
 <template>
@@ -24,6 +49,8 @@ const { document: playlist, error } = getDocument('playlists', playlistId.value)
             <h2>{{ playlist.title }}</h2>
             <p class="username">Created by {{ playlist.username }}</p>
             <p class="description">{{ playlist.description }}</p>
+            <button v-if="isPlaylistOwner && !isPending" @click="handleDelete">Delete</button>
+            <button v-if="isPending" disabled>Deleting playlist...</button>
         </div>
         <!-- Song list -->
         <div class="song-list">
