@@ -1,4 +1,4 @@
-import { getDownloadURL, ref as storeRef, uploadBytesResumable } from '@firebase/storage';
+import { deleteObject, getDownloadURL, ref as storeRef, uploadBytesResumable } from '@firebase/storage';
 import { fireStorage } from '@/firebase/config';
 import { ref } from 'vue';
 
@@ -15,8 +15,8 @@ const useStorage = () => {
             const uploadTask = uploadBytesResumable(imageRef, image);
             uploadTask.on('state_changed', {
                 error: (err) => {
-                    error.value = err;
-
+                    console.log(err.message);
+                    error.value = 'Error uploading image';
                     reject(err);
                 },
                 complete: () => {
@@ -30,7 +30,17 @@ const useStorage = () => {
         });
     };
 
-    return { error, url, filePath, uploadImage };
+    const deleteImage = async (imagePath) => {
+        try {
+            const imageRef = storeRef(fireStorage, imagePath);
+            await deleteObject(imageRef);
+        } catch (err) {
+            console.log(err.message);
+            error.value = 'Error deleting image';
+        }
+    };
+
+    return { error, url, filePath, uploadImage, deleteImage };
 };
 
 export default useStorage;

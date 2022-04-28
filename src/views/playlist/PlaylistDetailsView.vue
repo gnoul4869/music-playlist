@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import getDocument from '@/composables/getDocument';
 import useDocument from '@/composables/useDocument';
 import getUser from '@/composables/getUser';
+import useStorage from '@/composables/useStorage';
 
 const router = useRouter();
 
@@ -15,15 +16,16 @@ const playlistId = computed(() => {
     return props.id.split('.').pop();
 });
 
-const error = computed(() => {
-    return getDocumentError.value || useDocumentError.value;
-});
-
 const isPending = ref(false);
 
 const { document: playlist, error: getDocumentError } = getDocument('playlists', playlistId.value);
 const { error: useDocumentError, deleteDocument } = useDocument('playlists', playlistId.value);
+const { error: useStorageError, deleteImage } = useStorage();
 const { user } = getUser();
+
+const error = computed(() => {
+    return getDocumentError.value || useDocumentError.value || useStorageError.value;
+});
 
 const isPlaylistOwner = computed(() => {
     return playlist.value && user.value && user.value.uid === playlist.value.userId;
@@ -31,7 +33,10 @@ const isPlaylistOwner = computed(() => {
 
 const handleDelete = async () => {
     isPending.value = true;
+
+    await deleteImage(playlist.value.coverPath);
     await deleteDocument();
+
     isPending.value = false;
 
     router.push({ name: 'home' });
