@@ -37,9 +37,11 @@ const handleDelete = async () => {
     await deleteImage(playlist.value.coverPath);
     await deleteDocument();
 
-    isPending.value = false;
+    if (!useDocumentError.value && !useStorageError.value) {
+        router.push({ name: 'home' });
+    }
 
-    router.push({ name: 'home' });
+    isPending.value = false;
 };
 </script>
 

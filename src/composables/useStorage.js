@@ -9,6 +9,7 @@ const useStorage = () => {
 
     const uploadImage = async (image, userId) => {
         return new Promise((resolve, reject) => {
+            error.value = '';
             filePath.value = `covers/${userId}/${image.name}`;
             const imageRef = storeRef(fireStorage, filePath.value);
 
@@ -32,6 +33,7 @@ const useStorage = () => {
 
     const deleteImage = async (imagePath) => {
         try {
+            error.value = '';
             const imageRef = storeRef(fireStorage, imagePath);
             await deleteObject(imageRef);
         } catch (err) {

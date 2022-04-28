@@ -6,9 +6,8 @@ const useDocument = (collectionName, documentId) => {
     const error = ref('');
 
     const deleteDocument = async () => {
-        error.value = '';
-
         try {
+            error.value = '';
             const documentRef = doc(firestore, collectionName, documentId);
             const res = await deleteDoc(documentRef);
 
