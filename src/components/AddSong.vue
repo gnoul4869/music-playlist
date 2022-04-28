@@ -1,13 +1,27 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watchEffect } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
+
+import useDocument from '@/composables/useDocument';
 
 const props = defineProps({
     playlist: Object,
 });
 
-const showForm = ref(false);
+const { error: useDocumentError, updateDocument } = useDocument('playlists', props.playlist.id);
+
+const isPending = ref(false);
 const error = ref('');
+
+watchEffect(() => {
+    if (!isPending.value) {
+        error.value = useDocumentError.value && 'Error adding song';
+    } else {
+        error.value = '';
+    }
+});
+
+const showForm = ref(false);
 
 const title = ref('');
 const artist = ref('');
@@ -17,18 +31,20 @@ const handleShowForm = () => {
 };
 
 const handleSubmit = async () => {
-    try {
-        const song = {
-            id: uuidv4(),
-            title: title.value,
-            artist: artist.value,
-        };
+    isPending.value = true;
 
-        console.log(song);
-    } catch (err) {
-        console.log(err.message);
-        error.value = 'Error adding song';
-    }
+    const newSong = {
+        id: uuidv4(),
+        title: title.value,
+        artist: artist.value,
+    };
+
+    await updateDocument({ songs: [...props.playlist.songs, newSong] });
+
+    title.value = '';
+    artist.value = '';
+
+    isPending.value = false;
 };
 </script>
 
@@ -40,7 +56,8 @@ const handleSubmit = async () => {
             <h4>Add a new song</h4>
             <input type="text" placeholder="Song title" v-model="title" required />
             <input type="text" placeholder="Artist" v-model="artist" required />
-            <button>Add</button>
+            <button v-if="!isPending">Add</button>
+            <button v-else disabled>Adding song...</button>
         </form>
     </div>
 </template>

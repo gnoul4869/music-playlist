@@ -29,7 +29,6 @@ const { user } = getUser();
 
 // Reactive variables
 const isPending = ref(false);
-
 const error = ref('');
 
 watchEffect(() => {

@@ -1,14 +1,14 @@
 import { ref } from 'vue';
-import { addDoc, collection, deleteDoc, doc } from '@firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, updateDoc } from '@firebase/firestore';
 import { firestore } from '@/firebase/config';
 
 const useDocument = (collectionName, documentId) => {
     const error = ref('');
 
-    const addDocument = async (doc) => {
+    const addDocument = async (document) => {
         try {
             error.value = '';
-            const res = await addDoc(collection(firestore, collectionName), doc);
+            const res = await addDoc(collection(firestore, collectionName), document);
 
             return res;
         } catch (err) {
@@ -29,7 +29,20 @@ const useDocument = (collectionName, documentId) => {
         }
     };
 
-    return { error, addDocument, deleteDocument };
+    const updateDocument = async (updates) => {
+        try {
+            error.value = '';
+            const documentRef = doc(firestore, collectionName, documentId);
+            const res = await updateDoc(documentRef, updates);
+
+            return res;
+        } catch (err) {
+            console.log(err.message);
+            error.value = 'Error updating playlist';
+        }
+    };
+
+    return { error, addDocument, deleteDocument, updateDocument };
 };
 
 export default useDocument;
