@@ -2,11 +2,15 @@
 import { watchEffect } from 'vue';
 import { computed, ref } from '@vue/reactivity';
 import { useRouter } from 'vue-router';
+
+import AddSong from '@/components/AddSong.vue';
+
 import getDocument from '@/composables/getDocument';
 import useDocument from '@/composables/useDocument';
-import getUser from '@/composables/getUser';
 import useStorage from '@/composables/useStorage';
+import getUser from '@/composables/getUser';
 
+// Playlist Id
 const router = useRouter();
 
 const props = defineProps({
@@ -17,12 +21,14 @@ const playlistId = computed(() => {
     return props.id.split('.').pop();
 });
 
-const isPending = ref(false);
-
+// Composable functions
 const { document: playlist, error: getDocumentError } = getDocument('playlists', playlistId.value);
 const { error: useDocumentError, deleteDocument } = useDocument('playlists', playlistId.value);
 const { error: useStorageError, deleteImage } = useStorage();
 const { user } = getUser();
+
+// Reactive variables
+const isPending = ref(false);
 
 const error = ref('');
 
@@ -68,7 +74,7 @@ const handleDelete = async () => {
         </div>
         <!-- Song list -->
         <div class="song-list">
-            <p>songs...</p>
+            <AddSong v-if="isPlaylistOwner" :playlist="playlist" />
         </div>
     </div>
 </template>
