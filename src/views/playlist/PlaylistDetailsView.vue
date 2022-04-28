@@ -1,4 +1,5 @@
 <script setup>
+import { watchEffect } from 'vue';
 import { computed, ref } from '@vue/reactivity';
 import { useRouter } from 'vue-router';
 import getDocument from '@/composables/getDocument';
@@ -23,8 +24,14 @@ const { error: useDocumentError, deleteDocument } = useDocument('playlists', pla
 const { error: useStorageError, deleteImage } = useStorage();
 const { user } = getUser();
 
-const error = computed(() => {
-    return getDocumentError.value || useDocumentError.value || useStorageError.value;
+const error = ref('');
+
+watchEffect(() => {
+    if (!isPending.value) {
+        error.value = getDocumentError.value || useDocumentError.value || useStorageError.value;
+    } else {
+        error.value = '';
+    }
 });
 
 const isPlaylistOwner = computed(() => {
