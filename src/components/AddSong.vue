@@ -1,6 +1,6 @@
 <script setup>
-import { v4 as uuidv4 } from 'uuid';
 import { ref } from 'vue';
+import { v4 as uuidv4 } from 'uuid';
 
 const props = defineProps({
     playlist: Object,

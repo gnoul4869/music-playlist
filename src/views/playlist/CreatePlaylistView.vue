@@ -1,16 +1,17 @@
 <script setup>
-import { computed, ref } from '@vue/reactivity';
+import { ref } from '@vue/reactivity';
+import { useRouter } from 'vue-router';
 import { serverTimestamp } from '@firebase/firestore';
 import getUser from '@/composables/getUser';
 import useStorage from '@/composables/useStorage';
-import useCollection from '@/composables/useCollection';
-import { useRouter } from 'vue-router';
+import useDocument from '@/composables/useDocument';
 import generateParams from '@/utils/generateParams';
+
+const { error: useDocumentError, addDocument } = useDocument('playlists');
+const { error: useStorageError, url, filePath, uploadImage } = useStorage();
 
 const router = useRouter();
 
-const storage = useStorage();
-const collection = useCollection('playlists');
 const { user } = getUser();
 
 const title = ref('');
@@ -45,14 +46,14 @@ const handleSubmit = async () => {
     error.value = '';
     isPending.value = true;
 
-    await storage.uploadImage(image.value, user.value.uid);
-    const res = await collection.addDocument({
+    await uploadImage(image.value, user.value.uid);
+    const res = await addDocument({
         title: title.value,
         description: description.value,
         userId: user.value.uid,
         username: user.value.displayName,
-        coverURL: storage.url.value,
-        coverPath: storage.filePath.value,
+        coverURL: url.value,
+        coverPath: filePath.value,
         songs: [],
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
@@ -60,11 +61,11 @@ const handleSubmit = async () => {
 
     isPending.value = false;
 
-    if (storage.error.value) {
-        return (error.value = storage.error.value);
+    if (useStorageError.value) {
+        return (error.value = useStorageError.value);
     }
-    if (collection.error.value) {
-        return (error.value = collection.error.value);
+    if (useDocumentError.value) {
+        return (error.value = useDocumentError.value);
     }
 
     router.push({ name: 'playlistDetails', params: { id: generateParams(title.value, res.id) } });

@@ -1,9 +1,20 @@
 import { ref } from 'vue';
-import { deleteDoc, doc } from '@firebase/firestore';
+import { addDoc, collection, deleteDoc, doc } from '@firebase/firestore';
 import { firestore } from '@/firebase/config';
 
 const useDocument = (collectionName, documentId) => {
     const error = ref('');
+
+    const addDocument = async (doc) => {
+        try {
+            error.value = '';
+            const res = await addDoc(collection(firestore, collectionName), doc);
+
+            return res;
+        } catch (err) {
+            error.value = err.message;
+        }
+    };
 
     const deleteDocument = async () => {
         try {
@@ -18,7 +29,7 @@ const useDocument = (collectionName, documentId) => {
         }
     };
 
-    return { error, deleteDocument };
+    return { error, addDocument, deleteDocument };
 };
 
 export default useDocument;
