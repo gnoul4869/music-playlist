@@ -66,6 +66,7 @@ const router = createRouter({
             path: '/playlists/user',
             name: 'userPlaylists',
             component: UserPlaylistView,
+            beforeEnter: requireAuth,
         },
     ],
 });
