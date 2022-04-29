@@ -23,7 +23,7 @@ const playlistId = computed(() => {
 
 // Composable functions
 const { document: playlist, error: getDocumentError } = getDocument('playlists', playlistId.value);
-const { error: useDocumentError, deleteDocument } = useDocument('playlists', playlistId.value);
+const { error: useDocumentError, deleteDocument, updateDocument } = useDocument('playlists', playlistId.value);
 const { error: useStorageError, deleteImage } = useStorage();
 const { user } = getUser();
 
@@ -43,7 +43,7 @@ const isPlaylistOwner = computed(() => {
     return playlist.value && user.value && user.value.uid === playlist.value.userId;
 });
 
-const handleDelete = async () => {
+const handleDeletePlaylist = async () => {
     isPending.value = true;
 
     await deleteImage(playlist.value.coverPath);
@@ -54,6 +54,10 @@ const handleDelete = async () => {
     }
 
     isPending.value = false;
+};
+
+const handleRemoveSong = async (songId) => {
+    await updateDocument({ songs: playlist.value.songs.filter((song) => song.id !== songId) });
 };
 </script>
 
@@ -68,7 +72,7 @@ const handleDelete = async () => {
             <h2>{{ playlist.title }}</h2>
             <p class="username">Created by {{ playlist.username }}</p>
             <p class="description">{{ playlist.description }}</p>
-            <button v-if="isPlaylistOwner && !isPending" @click="handleDelete">Delete</button>
+            <button v-if="isPlaylistOwner && !isPending" @click="handleDeletePlaylist">Delete</button>
             <button v-if="isPending" disabled>Deleting playlist...</button>
         </div>
         <!-- Song list -->
@@ -79,7 +83,7 @@ const handleDelete = async () => {
                     <h3>{{ song.title }}</h3>
                     <p>{{ song.artist }}</p>
                 </div>
-                <button v-if="isPlaylistOwner">Remove</button>
+                <button v-if="isPlaylistOwner" @click="handleRemoveSong(song.id)">Remove</button>
             </div>
             <AddSong v-if="isPlaylistOwner" :playlist="playlist" />
         </div>
