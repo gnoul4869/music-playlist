@@ -3,6 +3,10 @@ import { ref } from '@vue/reactivity';
 import { useRouter } from 'vue-router';
 import useSignup from '@/composables/useSignup';
 
+const props = defineProps({
+    redirect: String,
+});
+
 const router = useRouter();
 
 const { error, isPending, signup } = useSignup();
@@ -15,7 +19,7 @@ const handleSubmit = async () => {
     const res = await signup(email.value, password.value, displayName.value);
 
     if (!error.value) {
-        router.push({ name: 'home' });
+        router.push(props.redirect || '/');
     }
 };
 </script>

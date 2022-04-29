@@ -1,7 +1,12 @@
 <script setup>
 import getUser from '@/composables/getUser';
 import useLogout from '@/composables/useLogout';
-import { useRouter } from 'vue-router';
+import { computed } from '@vue/reactivity';
+import { useRoute } from 'vue-router';
+
+// Redirect params
+const route = useRoute();
+const redirect = computed(() => route.path);
 
 const { user } = getUser();
 const { logout } = useLogout();
@@ -20,11 +25,12 @@ const handleLogout = async () => {
             <div class="links">
                 <div v-if="user">
                     <router-link :to="{ name: 'createPlaylist' }">Create Playlist</router-link>
+                    <router-link :to="{ name: 'userPlaylists' }">My Playlists</router-link>
                     <button @click="handleLogout">Log out</button>
                 </div>
                 <div v-else>
-                    <router-link :to="{ name: 'signup' }" class="btn">Sign up</router-link>
-                    <router-link :to="{ name: 'login' }" class="btn">Log in</router-link>
+                    <router-link :to="{ name: 'signup', params: { redirect } }" class="btn">Sign up</router-link>
+                    <router-link :to="{ name: 'login', params: { redirect } }" class="btn">Log in</router-link>
                 </div>
             </div>
         </nav>
@@ -50,10 +56,13 @@ nav h1 {
     margin-left: 20px;
 }
 nav .links {
+    display: flex;
+    align-items: center;
     margin-left: auto;
 }
 nav .links a,
 button {
+    margin: 0;
     margin-left: 16px;
     font-size: 14px;
 }

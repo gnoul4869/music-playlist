@@ -3,6 +3,10 @@ import { ref } from '@vue/reactivity';
 import { useRouter } from 'vue-router';
 import useLogin from '@/composables/useLogin';
 
+const props = defineProps({
+    redirect: String,
+});
+
 const router = useRouter();
 
 const { error, isPending, login } = useLogin();
@@ -14,7 +18,7 @@ const handleSubmit = async () => {
     await login(email.value, password.value);
 
     if (!error.value) {
-        router.push({ name: 'home' });
+        router.push(props.redirect || '/');
     }
 };
 </script>
