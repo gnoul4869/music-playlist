@@ -45,6 +45,7 @@ const handleSubmit = async () => {
     artist.value = '';
 
     isPending.value = false;
+    showForm.value = false;
 };
 </script>
 
