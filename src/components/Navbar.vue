@@ -20,17 +20,17 @@ const handleLogout = async () => {
     <div class="navbar">
         <nav>
             <h1>
-                <router-link :to="{ name: 'home' }"> Music Playlist </router-link>
+                <router-link :to="{ name: 'Home' }"> Music Playlist </router-link>
             </h1>
             <div class="links">
                 <div v-if="user">
-                    <router-link :to="{ name: 'createPlaylist' }">Create Playlist</router-link>
-                    <router-link :to="{ name: 'userPlaylists' }">My Playlists</router-link>
+                    <router-link :to="{ name: 'CreatePlaylist' }">Create Playlist</router-link>
+                    <router-link :to="{ name: 'UserPlaylists' }">My Playlists</router-link>
                     <button @click="handleLogout">Log out</button>
                 </div>
                 <div v-else>
-                    <router-link :to="{ name: 'signup', params: { redirect } }" class="btn">Sign up</router-link>
-                    <router-link :to="{ name: 'login', params: { redirect } }" class="btn">Log in</router-link>
+                    <router-link :to="{ name: 'Signup', params: { redirect } }" class="btn">Sign up</router-link>
+                    <router-link :to="{ name: 'Login', params: { redirect } }" class="btn">Log in</router-link>
                 </div>
             </div>
         </nav>

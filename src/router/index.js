@@ -7,12 +7,12 @@ import SignupView from '@/views/auth/SignupView.vue';
 import HomeView from '@/views/HomeView.vue';
 import CreatePlaylistView from '@/views/playlist/CreatePlaylistView.vue';
 import PlaylistDetailsView from '@/views/playlist/PlaylistDetailsView.vue';
-import UserPlaylistView from '@/views/playlist/UserPlaylistView.vue';
+import UserPlaylistsView from '@/views/playlist/UserPlaylistsView.vue';
 
 const requireAuth = (to, from, next) => {
     const user = fireAuth.currentUser;
     if (!user) {
-        next({ name: 'login', params: { redirect: to.path } });
+        next({ name: 'Login', params: { redirect: to.path } });
     } else {
         next();
     }
@@ -22,7 +22,7 @@ const requireNoAuth = (to, from, next) => {
     const user = fireAuth.currentUser;
 
     if (user) {
-        next({ name: 'home' });
+        next({ name: 'Home' });
     } else {
         next();
     }
@@ -33,39 +33,39 @@ const router = createRouter({
     routes: [
         {
             path: '/',
-            name: 'home',
+            name: 'Home',
             component: HomeView,
         },
         {
             path: '/login',
-            name: 'login',
+            name: 'Login',
             component: LoginView,
             beforeEnter: requireNoAuth,
             props: true,
         },
         {
             path: '/signup',
-            name: 'signup',
+            name: 'Signup',
             component: SignupView,
             beforeEnter: requireNoAuth,
             props: true,
         },
         {
             path: '/playlists/create',
-            name: 'createPlaylist',
+            name: 'CreatePlaylist',
             component: CreatePlaylistView,
             beforeEnter: requireAuth,
         },
         {
             path: '/playlists/:id',
-            name: 'playlistDetails',
+            name: 'PlaylistDetails',
             component: PlaylistDetailsView,
             props: true,
         },
         {
             path: '/playlists/user',
-            name: 'userPlaylists',
-            component: UserPlaylistView,
+            name: 'UserPlaylists',
+            component: UserPlaylistsView,
             beforeEnter: requireAuth,
         },
     ],

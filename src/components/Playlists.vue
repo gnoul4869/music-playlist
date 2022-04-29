@@ -15,16 +15,14 @@ const { user } = getUser();
 
 watch(user, () => {
     if (!user.value) {
-        router.push({ name: 'login' });
+        router.push({ name: 'Login' });
     }
 });
 </script>
 
 <template>
     <div v-for="playlist in playlists" :key="playlist.id">
-        <router-link
-            :to="{ name: 'playlistDetails', params: { id: generateParams(playlist.title, playlist.id) } }"
-        >
+        <router-link :to="{ name: 'PlaylistDetails', params: { id: generateParams(playlist.title, playlist.id) } }">
             <div class="single">
                 <div class="thumbnail">
                     <img :src="playlist.coverURL" />

@@ -68,7 +68,7 @@ const handleSubmit = async () => {
         return (error.value = useDocumentError.value);
     }
 
-    router.push({ name: 'playlistDetails', params: { id: generateParams(title.value, res.id) } });
+    router.push({ name: 'PlaylistDetails', params: { id: generateParams(title.value, res.id) } });
 };
 </script>
 

@@ -50,7 +50,7 @@ const handleDeletePlaylist = async () => {
     await deleteDocument();
 
     if (!useDocumentError.value && !useStorageError.value) {
-        router.push({ name: 'home' });
+        router.push({ name: 'Home' });
     }
 
     isPending.value = false;
